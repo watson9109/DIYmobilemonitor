@@ -6,6 +6,7 @@ Display_height = 197;
 Display_tail_width = 220;
 Display_tail_height = 12;
 Display_depth = 2;
+Display_bezel = 2;
 
 Monitor_width = Display_width + 10;
 Monitor_height = Display_height + Display_tail_height + 10;
@@ -15,7 +16,7 @@ module NutHole() {
     cylinder(d = 3.5, h = 4);
 }
 
-module Display() {
+module Display_Whole() {
     union() {
         cube([Display_width, Display_height, Display_depth], anchor=TOP){
             attach(FWD, FWD){
@@ -25,18 +26,33 @@ module Display() {
     }
 }
 
+module Display_Area() {
+    cube([Display_width - Display_bezel, Display_height - Display_bezel, Display_depth], anchor=BOTTOM);
+}
+
 module MonitorCup() {
     difference(){
         cube([Monitor_width, Monitor_height, Monitor_depth], anchor=TOP);
         back(Display_tail_height/2) {
-            Display();
+            Display_Whole();
         }
     }    
 }
 
+module MonitorCover() {
+    difference(){
+        cube([Monitor_width, Monitor_height, Display_depth], anchor=BOTTOM);
+        back(Display_tail_height/2) {
+            Display_Area();
+        }
+    }
+}
+
 module main() { 
-    
- MonitorCup();       
+    MonitorCup();
+//    translate([0, Monitor_height + 10, 0]){
+        MonitorCover();
+//    }
 }
 
 main();
